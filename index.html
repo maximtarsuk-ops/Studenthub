@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Студентський Планер — 11-ІТ</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 260px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .logo-area {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-links button {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links button:hover, .nav-links button.active {
+            background-color: #e0e7ff;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        main {
+            margin-left: 260px;
+            flex: 1;
+            padding: 30px;
+            max-width: calc(100% - 260px);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: var(--text-color);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .day-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .day-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .schedule-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .lesson-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left-width: 5px;
+            border-radius: 8px;
+        }
+
+        .lesson-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .lesson-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .lesson-time {
+            font-weight: bold;
+            color: var(--primary);
+            background: #e0e7ff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .todo-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input-group input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .todo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .pomodoro-container {
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        textarea.notes-area {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            outline: none;
+        }
+
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .grades-table th, .grades-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .grades-table th {
+            background: #f1f5f9;
+        }
+
+        .grades-table input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            aside { width: 70px; }
+            .logo-area span, .nav-links span { display: none; }
+            main { margin-left: 70px; max-width: calc(100% - 70px); }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="logo-area">
+            🎓 <span>Планер 11-ІТ</span>
+        </div>
+        <ul class="nav-links">
+            <li><button class="active" onclick="switchTab('schedule', this)">📅 <span>Розклад</span></button></li>
+            <li><button onclick="switchTab('todo', this)">📝 <span>To-Do Список</span></button></li>
+            <li><button onclick="switchTab('pomodoro', this)">⏳ <span>Помодоро</span></button></li>
+            <li><button onclick="switchTab('notes', this)">📓 <span>Нотатки</span></button></li>
+            <li><button onclick="switchTab('grades', this)">📊 <span>Середній бал</span></button></li>
+        </ul>
+    </aside>
+
+    <main>
+        <section id="schedule" class="section active">
+            <h2>Розклад занять (11-ІТ)</h2>
+            <div class="day-filter">
+                <button class="day-btn active" onclick="filterDay('Понеділок', this)">Понеділок</button>
+                <button class="day-btn" onclick="filterDay('Вівторок', this)">Вівторок</button>
+                <button class="day-btn" onclick="filterDay('Середа', this)">Середа</button>
+                <button class="day-btn" onclick="filterDay('Четвер', this)">Четвер</button>
+                <button class="day-btn" onclick="filterDay('Пʼятниця', this)">Пʼятниця</button>
+            </div>
+            <div class="schedule-grid" id="schedule-container">
+            </div>
+        </section>
+
+        <section id="todo" class="section">
+            <h2>Список завдань (To-Do)</h2>
+            <div class="card">
+                <div class="todo-input-group">
+                    <input type="text" id="todo-input" placeholder="Додати нове завдання...">
+                    <button class="btn" onclick="addTodo()">Додати</button>
+                </div>
+                <ul class="todo-list" id="todo-list"></ul>
+            </div>
+        </section>
+
+        <section id="pomodoro" class="section">
+            <h2>Таймер Помодоро</h2>
+            <div class="card pomodoro-container">
+                <p id="timer-label" style="font-weight: 600; color: var(--text-light);">Час працювати!</p>
+                <div class="timer-display" id="timer">25:00</div>
+                <div class="timer-controls">
+                    <button class="btn" onclick="startPomodoro()">Старт</button>
+                    <button class="btn" style="background: #64748b;" onclick="pausePomodoro()">Пауза</button>
+                    <button class="btn" style="background: var(--danger);" onclick="resetPomodoro()">Скинути</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="notes" class="section">
+            <h2>Швидкі нотатки</h2>
+            <div class="card">
+                <textarea class="notes-area" id="quick-notes" placeholder="Пишіть сюди конспекти, ідеї чи важливі думки... (зберігається автоматично)"></textarea>
+            </div>
+        </section>
+
+        <section id="grades" class="section">
+            <h2>Калькулятор середнього бала</h2>
+            <div class="card">
+                <table class="grades-table">
+                    <thead>
+                        <tr>
+                            <th>Предмет</th>
+                            <th>Оцінка (1-12)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Українська література</td><td><input type="number" min="1" max="12" class="grade-input" oninput="calculateAverage()"></td></tr>
+                        <tr><td>Математика</td><td><input type="number" min="1" max="12" class="grade-input" oninput="calculateAverage()"></td></tr>
+                        <tr><td>Фізика / Астрономія</td><td><input type="number" min="1" max="12" class="grade-input" oninput="calculateAverage()"></td></tr>
+                        <tr><td>Хімія</td><td><input type="number" min="1" max="12" class="grade-input" oninput="calculateAverage()"></td></tr>
+                        <tr><td>Географія</td><td><input type="number" min="1" max="12" class="grade-input" oninput="calculateAverage()"></td></tr>
+                    </tbody>
+                </table>
+                <h3>Середній бал: <span id="avg-result" style="color: var(--primary);">0.00</span></h3>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        const scheduleData = {
+            "Понеділок": [
+                { time: "08.30-09.50", name: "Укр.літ", teacher: "Миронюк" },
+                { time: "08.30-09.50", name: "Хімія", teacher: "Зіняч" },
+                { time: "10.00-11.20", name: "Географія", teacher: "Малимон" },
+                { time: "10.00-11.20", name: "Фізика, астрономія", teacher: "Грицик" },
+                { time: "11.30-12.50", name: "Математика", teacher: "Герасимчук" }
+            ],
+            "Вівторок": [
+                { time: "08.30-09.50", name: "Фізична культура", teacher: "Турчик" },
+                { time: "10.00-11.20", name: "Укр.мова", teacher: "Миронюк" },
+                { time: "11.30-12.50", name: "Біологія, екологія", teacher: "Зіняч" }
+            ],
+            "Середа": [
+                { time: "08.30-09.50", name: "Хімія", teacher: "Зіняч" },
+                { time: "10.00-11.20", name: "Фізика, астрономія", teacher: "Грицик" },
+                { time: "11.30-12.50", name: "Інформатика", teacher: "Гребіненко" }
+            ],
+            "Четвер": [
+                { time: "08.30-09.50", name: "Заруб.літ", teacher: "Ткачук" },
+                { time: "10.00-11.20", name: "Історія: Україна і світ", teacher: "Коняхін" },
+                { time: "11.30-12.50", name: "Іноземна мова", teacher: "Музичук" }
+            ],
+            "Пʼятниця": [
+                { time: "08.30-09.50", name: "Укр.літ", teacher: "Миронюк" },
+                { time: "10.00-11.20", name: "Захист України", teacher: "Шмігель" },
+                { time: "11.30-12.50", name: "Математика", teacher: "Герасимчук" },
+                { time: "13.00-14.20", name: "Фізика, астрономія", teacher: "Грицик" }
+            ]
+        };
+
+        function filterDay(day, btn) {
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = '';
+            
+            if(scheduleData[day]) {
+                scheduleData[day].forEach(lesson => {
+                    container.innerHTML += `
+                        <div class="lesson-item">
+                            <div class="lesson-info">
+                                <h4>${lesson.name}</h4>
+                                <p>Викладач: ${lesson.teacher}</p>
+                            </div>
+                            <div class="lesson-time">${lesson.time}</div>
+                        </div>
+                    `;
+                });
+            }
+        }
+        filterDay('Понеділок', document.querySelector('.day-btn'));
+
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        function renderTodos() {
+            const list = document.getElementById('todo-list');
+            list.innerHTML = '';
+            todos.forEach((todo, index) => {
+                list.innerHTML += `
+                    <li class="todo-item ${todo.completed ? 'completed' : ''}">
+                        <span onclick="toggleTodo(${index})" style="cursor:pointer; flex:1;">${todo.text}</span>
+                        <div class="todo-actions">
+                            <button class="delete-btn" onclick="deleteTodo(${index})">Видалити</button>
+                        </div>
+                    </li>
+                `;
+            });
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            if(input.value.trim() === '') return;
+            todos.push({ text: input.value, completed: false });
+            input.value = '';
+            renderTodos();
+        }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderTodos();
+        }
+        renderTodos();
+
+        let timerMinutes = 25;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let isRunning = false;
+
+        function updateTimerDisplay() {
+            document.getElementById('timer').innerText = 
+                `${String(timerMinutes).padStart(2, '0')}:${String(timerSeconds).padStart(2, '0')}`;
+        }
+
+        function startPomodoro() {
+            if (isRunning) return;
+            isRunning = true;
+            timerInterval = setInterval(() => {
+                if (timerSeconds === 0) {
+                    if (timerMinutes === 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        alert('Час вийшов! Зробіть перерву.');
+                        return;
+                    }
+                    timerMinutes--;
+                    timerSeconds = 59;
+                } else {
+                    timerSeconds--;
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function pausePomodoro() {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function resetPomodoro() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timerMinutes = 25;
+            timerSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        const notesArea = document.getElementById('quick-notes');
+        notesArea.value = localStorage.getItem('quick_notes') || '';
+        notesArea.addEventListener('input', () => {
+            localStorage.setItem('quick_notes', notesArea.value);
+        });
+
+        function calculateAverage() {
+            const inputs = document.querySelectorAll('.grade-input');
+            let sum = 0;
+            let count = 0;
+            inputs.forEach(input => {
+                const val = parseFloat(input.value);
+                if (!isNaN(val) && val > 0) {
+                    sum += val;
+                    count++;
+                }
+            });
+            const avg = count > 0 ? (sum / count).toFixed(2) : '0.00';
+            document.getElementById('avg-result').innerText = avg;
+        }
+    </script>
+</body>
+</html>
